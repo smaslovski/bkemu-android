@@ -42,16 +42,16 @@ android {
     }
 
     // Release management
-    signingConfigs {
-        release {
-            Properties properties = new Properties()
-            properties.load(project.rootProject.file('local.properties').newDataInputStream())
-            keyAlias properties.getProperty('key.alias')
-            keyPassword properties.getProperty('key.password')
-            storeFile file(properties.getProperty('key.store.file'))
-            storePassword properties.getProperty('key.store.password')
-        }
-    }
+//    signingConfigs {
+//        release {
+//            Properties properties = new Properties()
+//            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//            keyAlias properties.getProperty('key.alias')
+//            keyPassword properties.getProperty('key.password')
+//            storeFile file(properties.getProperty('key.store.file'))
+//            storePassword properties.getProperty('key.store.password')
+//        }
+//    }
     buildTypes {
         debug {
             versionNameSuffix "-debug"
@@ -59,7 +59,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.cfg'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
     }
 
