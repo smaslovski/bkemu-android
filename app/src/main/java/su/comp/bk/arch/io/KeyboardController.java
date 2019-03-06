@@ -94,6 +94,9 @@ public class KeyboardController implements Device, OnTouchListener {
     // Low register modifier key is pressed flag
     private boolean isLowRegisterPressed;
 
+    // Low register modifier key is locked flag
+    private boolean isLowRegisterLocked;
+
     // AR2 (Alternative Register 2) key is pressed flag
     private boolean isAr2Pressed;
 
@@ -416,6 +419,17 @@ public class KeyboardController implements Device, OnTouchListener {
                 ? R.drawable.arrow_shift_on : R.drawable.arrow_shift);
     }
 
+    // FIX ME: Better implement three-state LowRegisterPressed as an enum...
+    private boolean isLowRegisterLocked() {
+        return isLowRegisterLocked;
+    }
+
+    private void setLowRegisterLocked(boolean isLowRegisterLocked) {
+        this.isLowRegisterLocked = isLowRegisterLocked;
+        if (isLowRegisterLocked)
+            this.lowRegisterButton.setImageResource(R.drawable.arrow_shift_on); // FIX resource
+    }
+
     private void setStatusRegisterDataReadyFlag(boolean isDataReady) {
         this.statusRegister = isDataReady ? (this.statusRegister | STATUS_DATA_READY)
                 : (this.statusRegister & ~STATUS_DATA_READY);
@@ -537,6 +551,10 @@ public class KeyboardController implements Device, OnTouchListener {
                             isLatinMode() != isUppercaseMode() || isLowRegisterPressed();
                     if (isLowRegister) {
                         bkKeyCode = getLowRegisterKeyCode(bkKeyCode);
+                        if (!isLowRegisterLocked()) {
+                            clearModifierFlags();
+                            setLowRegisterPressed(false);
+                        }
                     }
                 }
                 // Set button pressed state
@@ -554,11 +572,22 @@ public class KeyboardController implements Device, OnTouchListener {
                         }
                         break;
                     case LOW_REGISTER:
-                        boolean lowRegisterModifierState = isLowRegisterPressed();
-                        if (isPressed || wasButtonPressed()) {
-                            clearModifierFlags();
-                            setLowRegisterPressed(!lowRegisterModifierState);
-                        }
+                        int lowRegisterModifierState = isLowRegisterPressed() ?
+                                (isLowRegisterLocked() ? 2 : 1) : 0;
+                        if (isPressed || wasButtonPressed())
+                            switch (lowRegisterModifierState) {
+                                case 0:
+                                    clearModifierFlags();
+                                    setLowRegisterPressed(true);
+                                    break;
+                                case 1:
+                                    setLowRegisterLocked(true);
+                                    break;
+                                case 2:
+                                    clearModifierFlags();
+                                    setLowRegisterPressed(false);
+                                    setLowRegisterLocked(false);
+                            }
                         break;
                     case AR2:
                         boolean ar2ModifierState = isAr2Pressed();
