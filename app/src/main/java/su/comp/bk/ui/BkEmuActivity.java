@@ -291,11 +291,11 @@ public class BkEmuActivity extends AppCompatActivity {
                 case 036: // EMT 36 - tape I/O
                     // Check EMT handler isn't hooked
                     int emtHandlerAddress = cpu.readMemory(false, Cpu.TRAP_VECTOR_EMT);
-                    if (computer.isReadOnlyMemoryAddress(emtHandlerAddress)) {
+                    // if (computer.isReadOnlyMemoryAddress(emtHandlerAddress)) {
                         tapeParamsBlockAddr = cpu.readRegister(false, Cpu.R1);
                         Log.d(TAG, "EMT 36, R1=0" + Integer.toOctalString(tapeParamsBlockAddr));
                         handleTapeOperation(cpu);
-                    }
+                    // }
                     break;
                 case Computer.BUS_ERROR:
                     Log.w(TAG, "Can't get EMT number");
